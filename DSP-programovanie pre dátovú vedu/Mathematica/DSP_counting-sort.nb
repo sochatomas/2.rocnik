@@ -1,0 +1,524 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 12.3' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     23082,        514]
+NotebookOptionsPosition[     22717,        500]
+NotebookOutlinePosition[     23126,        516]
+CellTagsIndexPosition[     23083,        513]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ RowBox[{"Manipulate", "[", "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{"(", 
+    RowBox[{
+     RowBox[{"If", " ", "[", 
+      RowBox[{
+       RowBox[{"akcia", " ", "==", " ", "0"}], ",", 
+       RowBox[{"pole", "=", " ", 
+        RowBox[{"f", "[", 
+         RowBox[{"hranica", ",", "velkost"}], "]"}]}]}], "]"}], ";", 
+     "                                                                        \
+                               ", 
+     RowBox[{"(*", 
+      RowBox[{"vygenerovanie", " ", "novej", " ", "mnoziny", " ", "bodov"}], 
+      "*)"}], "\[IndentingNewLine]", 
+     RowBox[{"If", "[", 
+      RowBox[{
+       RowBox[{"akcia", " ", "==", "1"}], ",", 
+       RowBox[{"triedenie", "[", "pole", "]"}]}], "]"}], ";", 
+     "                                                                        \
+                                                        ", 
+     RowBox[{"(*", 
+      RowBox[{
+      "zavolanie", " ", "funkcie", " ", "pre", " ", "utriedenie", " ", 
+       "po\:013ea"}], "*)"}], "\[IndentingNewLine]", 
+     RowBox[{"Dynamic", "[", 
+      RowBox[{"Row", "[", 
+       RowBox[{
+        RowBox[{"Framed", "/@", "pole"}], ",", 
+        RowBox[{"Frame", "->", "All"}]}], "]"}], "]"}]}], 
+    "\[IndentingNewLine]", ")"}], ",", "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"{", 
+    RowBox[{"velkost", ",", "4", ",", "15", ",", "1"}], "}"}], ",", 
+   RowBox[{"Dynamic", "[", "velkost", "]"}], ",", 
+   RowBox[{"{", 
+    RowBox[{"hranica", ",", "5", ",", "20", ",", "1"}], "}"}], ",", 
+   RowBox[{"Dynamic", "[", "hranica", "]"}], ",", 
+   "                                 ", 
+   RowBox[{"(*", 
+    RowBox[{
+    "nastavovanie", " ", "ve\:013ekosti", " ", "po\:013ea", " ", "a", " ", 
+     RowBox[{"max", ".", "velkosti"}], " ", "prvku"}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"Button", "[", 
+    RowBox[{"\"\<Vybra\[THacek] mno\[ZHacek]inu\>\"", ",", 
+     RowBox[{"akcia", " ", "=", "1"}]}], "]"}], ",", "\"\< \>\"", ",", 
+   "                                                                          \
+                                                      ", 
+   RowBox[{"(*", 
+    RowBox[{"tlacidlo", " ", "pre", " ", "spustenie", " ", "vypisu"}], "*)"}],
+    "\[IndentingNewLine]", 
+   RowBox[{"Dynamic", "[", 
+    RowBox[{"Grid", "[", 
+     RowBox[{
+      RowBox[{"{", 
+       RowBox[{
+        RowBox[{
+         RowBox[{
+          RowBox[{"Style", "[", 
+           RowBox[{"#", ",", "Gray"}], "]"}], "&"}], "/@", 
+         RowBox[{"Range", "[", 
+          RowBox[{"Length", "[", "vyskyty", "]"}], "]"}]}], ",", "vyskyty"}], 
+       "}"}], ",", 
+      RowBox[{"Dividers", "\[Rule]", "All"}]}], "]"}], "]"}], ",", 
+   "\"\< \>\"", ",", " ", 
+   RowBox[{"(*", " ", 
+    RowBox[{
+    "vypis", " ", "tabulky", " ", "pre", " ", "po\[CHacek]et", " ", 
+     "vyskytov"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"Dynamic", "[", 
+    RowBox[{"Row", "[", 
+     RowBox[{
+      RowBox[{"Framed", "/@", "sorted"}], ",", 
+      RowBox[{"Frame", "\[Rule]", "All"}]}], "]"}], "]"}], ",", 
+   "                                                                          \
+                               ", 
+   RowBox[{"(*", 
+    RowBox[{"vypis", " ", "utriedeneho", " ", "pola"}], "*)"}], 
+   "\[IndentingNewLine]", " ", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "inicializacia", " ", "funkcii", " ", "a", " ", "premennych", " ", 
+     "potrebnych", " ", "pre", " ", "vypocet"}], " ", "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"Initialization", "\[RuleDelayed]", 
+    RowBox[{
+    "(", "                                                                    \
+                                                                              \
+              ", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"f", "[", 
+        RowBox[{"x_", ",", "velkost_"}], "]"}], "=", 
+       RowBox[{"RandomInteger", "[", 
+        RowBox[{
+         RowBox[{"{", 
+          RowBox[{"1", ",", "x"}], "}"}], ",", "velkost"}], "]"}]}], ";", 
+      "                                                              ", 
+      RowBox[{"(*", 
+       RowBox[{
+       "generovanie", " ", "vstupnej", " ", "neusporiadanej", " ", 
+        "mno\[ZHacek]iny", " ", "pod\:013ea", " ", "rozsahu"}], "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{"akcia", " ", "=", " ", "0"}], ";", "\[IndentingNewLine]", 
+      "\[IndentingNewLine]", 
+      RowBox[{"vyskyty", " ", "=", " ", 
+       RowBox[{"Table", "[", 
+        RowBox[{"0", ",", 
+         RowBox[{"{", 
+          RowBox[{"i", ",", "1"}], "}"}]}], "]"}]}], ";", 
+      "\[IndentingNewLine]", 
+      RowBox[{"sorted", " ", "=", " ", 
+       RowBox[{"{", "0", "}"}]}], ";", "\[IndentingNewLine]", 
+      RowBox[{"(*", 
+       RowBox[{
+       "funkcia", " ", "zabezpe\[CHacek]uj\[UAcute]ca", " ", "cel\[EAcute]", 
+        " ", "triedenie", " ", "a", " ", "vykres\:013eovanie", " ", 
+        "jednotliv\[YAcute]ch", " ", "krokov"}], "*)"}], 
+      "\[IndentingNewLine]", 
+      RowBox[{
+       RowBox[{"triedenie", "[", 
+        RowBox[{"pole2_", "?", "ListQ"}], "]"}], ":=", 
+       RowBox[{"Module", "[", 
+        RowBox[{
+         RowBox[{"{", "}"}], ",", "\[IndentingNewLine]", 
+         RowBox[{"(*", 
+          RowBox[{
+          "vytvorenie", " ", "listu", " ", "pre", " ", "po\[CHacek]et", " ", 
+           "vyskytov"}], "*)"}], "\[IndentingNewLine]", 
+         RowBox[{
+          RowBox[{"(", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"Pause", "[", "1", "]"}], ";", "\[IndentingNewLine]", 
+            RowBox[{"vyskyty", "=", " ", 
+             RowBox[{"Table", "[", 
+              RowBox[{"0", ",", 
+               RowBox[{"{", 
+                RowBox[{"i", ",", 
+                 RowBox[{"Max", "[", "pole", "]"}]}], "}"}]}], "]"}]}]}], 
+           "\[IndentingNewLine]", ")"}], ";", "\[IndentingNewLine]", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "naplnenie", " ", "listu", " ", "pre", " ", "po\[CHacek]et", " ", 
+            "v\[YAcute]skytov"}], "*)"}], "\[IndentingNewLine]", 
+          RowBox[{"(", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"Pause", "[", "3", "]"}], ";", 
+            RowBox[{"akt", " ", "=", " ", "0"}], ";", 
+            RowBox[{"akt2", " ", "=", " ", "0"}], ";", "\[IndentingNewLine]", 
+            RowBox[{"Do", "[", 
+             RowBox[{
+              RowBox[{"(", " ", 
+               RowBox[{
+                RowBox[{"akt", " ", "=", 
+                 RowBox[{"pole", "[", 
+                  RowBox[{"[", "i", "]"}], "]"}]}], " ", ";", 
+                RowBox[{"akt2", " ", "=", 
+                 RowBox[{"vyskyty", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"pole", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "]"}], "]"}]}], " ", ";", 
+                "\[IndentingNewLine]", "\[IndentingNewLine]", " ", 
+                RowBox[{
+                 RowBox[{"pole", "[", 
+                  RowBox[{"[", "i", "]"}], "]"}], " ", "=", " ", 
+                 RowBox[{"Style", "[", 
+                  RowBox[{
+                   RowBox[{"pole", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], ",", "Purple", ",", 
+                   "16"}], "]"}]}], ";", 
+                "                                                         ", 
+                RowBox[{"(*", " ", 
+                 RowBox[{"zv\[YAcute]raznenie", " ", "prvkov"}], "*)"}], 
+                "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"vyskyty", "[", 
+                  RowBox[{"[", "akt", "]"}], "]"}], " ", "=", " ", 
+                 RowBox[{"Style", "[", 
+                  RowBox[{
+                   RowBox[{"vyskyty", "[", 
+                    RowBox[{"[", "akt", "]"}], "]"}], ",", "Red"}], "]"}]}], 
+                ";", "\[IndentingNewLine]", 
+                RowBox[{"Pause", "[", "1", "]"}], ";", "\[IndentingNewLine]", 
+                "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"pole", "[", 
+                  RowBox[{"[", "i", "]"}], "]"}], "=", "akt"}], ";", 
+                "                                                             \
+                                                  ", 
+                RowBox[{"(*", 
+                 RowBox[{
+                 "zmena", " ", "prvkov", " ", "na", " ", "ciselnu", " ", 
+                  "hodnotu"}], "*)"}], 
+                "                                                             \
+                           ", "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"vyskyty", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"pole", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "]"}], "]"}], " ", "=", 
+                 " ", "akt2"}], ";", "\[IndentingNewLine]", 
+                "\[IndentingNewLine]", "  ", 
+                RowBox[{
+                 RowBox[{"vyskyty", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"pole", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "]"}], "]"}], " ", "+=", 
+                 " ", "1"}], ";", 
+                "                                                             \
+                         ", 
+                RowBox[{"(*", 
+                 RowBox[{
+                 "inkrementovanie", " ", "v\[YAcute]skytu", " ", 
+                  "dan\[EAcute]ho", " ", "indexu", " ", "do", " ", "listu", 
+                  " ", "v\[YAcute]skytov"}], "*)"}], "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"vyskyty", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"pole", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "]"}], "]"}], "=", " ", 
+                 RowBox[{"Style", "[", 
+                  RowBox[{
+                   RowBox[{"vyskyty", "[", 
+                    RowBox[{"[", 
+                    RowBox[{"pole", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "]"}], "]"}], ",", 
+                   "Green"}], "]"}]}], ";", "                         ", 
+                RowBox[{"(*", " ", 
+                 RowBox[{
+                  RowBox[{"zvyraznenie", " ", "prvku"}], ",", 
+                  RowBox[{
+                  "ktor\[YAcute]", " ", "bol", " ", 
+                   "inkrementovan\[YAcute]"}]}], "*)"}], 
+                "\[IndentingNewLine]", 
+                RowBox[{"Pause", "[", "1", "]"}], ";", "\[IndentingNewLine]", 
+                "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"vyskyty", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"pole", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], "]"}], "]"}], " ", "=", 
+                 " ", 
+                 RowBox[{"akt2", " ", "+", "1"}]}], ";", 
+                "                                                             \
+               ", 
+                RowBox[{"(*", 
+                 RowBox[{
+                 "zmena", " ", "prvku", " ", "na", " ", "ciselnu", " ", 
+                  "hodnotu"}], "*)"}], "\[IndentingNewLine]", 
+                RowBox[{"Pause", "[", "0.5", "]"}], ";"}], ")"}], ",", 
+              "\[IndentingNewLine]", 
+              RowBox[{"{", 
+               RowBox[{"i", ",", 
+                RowBox[{"Length", "[", "pole", "]"}]}], "}"}]}], "]"}]}], 
+           "                                                                  \
+                                   ", 
+           RowBox[{"(*", 
+            RowBox[{"prejdenie", " ", "celej", " ", "mnoziny", " ", "bodov"}],
+             "*)"}], "\[IndentingNewLine]", ")"}], ";", "\[IndentingNewLine]",
+           "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "modifik\[AAcute]cia", " ", "listu", " ", "v\[YAcute]skytov"}], 
+           "*)"}], "\[IndentingNewLine]", 
+          RowBox[{
+          "(", "                                                              \
+                  ", 
+           RowBox[{"(*", 
+            RowBox[{
+            "cyklus", " ", "na", " ", "prejdenie", " ", "cel\[EAcute]ho", " ",
+              "listu", " ", "od", " ", "2.", "prvku", "  ", "a", " ", 
+             "pripo\[CHacek]\[IAcute]tanie", " ", "ku", " ", 
+             "ka\[ZHacek]d\[EAcute]mu", " ", "prvku", " ", "hodnotu", " ", 
+             RowBox[{"predch", ".", " ", "prvku"}]}], "*)"}], 
+           "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"Do", "[", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{
+                RowBox[{
+                 RowBox[{"vyskyty", "[", 
+                  RowBox[{"[", "i", "]"}], "]"}], " ", "+=", " ", 
+                 RowBox[{"vyskyty", "[", 
+                  RowBox[{"[", 
+                   RowBox[{"i", "-", "1"}], "]"}], "]"}]}], ";", 
+                "                                                             \
+        ", 
+                RowBox[{"(*", 
+                 RowBox[{
+                 "pripo\[CHacek]\[IAcute]tanie", " ", "k", " ", "prvku", " ", 
+                  "hodnotu", " ", 
+                  RowBox[{"predch", ".", " ", "prvku"}]}], "*)"}], 
+                "\[IndentingNewLine]", 
+                RowBox[{"akt", " ", "=", 
+                 RowBox[{"vyskyty", "[", 
+                  RowBox[{"[", "i", "]"}], "]"}]}], " ", ";", 
+                "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"vyskyty", "[", 
+                  RowBox[{"[", "i", "]"}], "]"}], " ", "=", 
+                 RowBox[{"Style", "[", 
+                  RowBox[{
+                   RowBox[{"vyskyty", "[", 
+                    RowBox[{"[", "i", "]"}], "]"}], ",", "Red"}], "]"}]}], 
+                ";", "                                                     ", 
+                RowBox[{"(*", 
+                 RowBox[{"zvyraznenie", " ", "prvku"}], "*)"}], 
+                "\[IndentingNewLine]", 
+                RowBox[{"Pause", "[", "1", "]"}], ";", "\[IndentingNewLine]", 
+                RowBox[{
+                 RowBox[{"vyskyty", "[", 
+                  RowBox[{"[", "i", "]"}], "]"}], "=", "akt"}]}], ")"}], ",", 
+              "                                                               \
+                                ", 
+              RowBox[{"(*", 
+               RowBox[{
+               "zmena", " ", "prvku", " ", "na", " ", "ciselnu", " ", 
+                "hodnotu"}], "*)"}], "\[IndentingNewLine]", 
+              RowBox[{"{", 
+               RowBox[{"i", ",", "2", ",", 
+                RowBox[{"Length", "[", "vyskyty", "]"}]}], "}"}]}], "]"}], 
+            ";"}], "\[IndentingNewLine]", ")"}], ";", "\[IndentingNewLine]", 
+          "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "vytvorenie", " ", "tabu\:013eky", " ", "pre", " ", 
+            "utrieden\[EAcute]", " ", "prvky"}], "*)"}], 
+          "\[IndentingNewLine]", 
+          RowBox[{"(", 
+           RowBox[{
+            RowBox[{"sorted", " ", "=", " ", 
+             RowBox[{"Table", "[", 
+              RowBox[{"0", ",", 
+               RowBox[{"{", 
+                RowBox[{"i", ",", 
+                 RowBox[{"Length", "[", "pole", "]"}]}], "}"}]}], "]"}]}], 
+            ";"}], ")"}], ";", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+          RowBox[{"(*", 
+           RowBox[{
+           "naplnenie", " ", "tabu\:013eky", " ", "utrieden\[YAcute]ch", " ", 
+            "prvkov"}], "*)"}], "\[IndentingNewLine]", 
+          RowBox[{"(", "\[IndentingNewLine]", 
+           RowBox[{
+            RowBox[{"Pause", "[", "3", "]"}], ";", " ", 
+            RowBox[{"akt", " ", "=", " ", "0"}], ";", 
+            RowBox[{"index", " ", "=", " ", "1"}], ";", 
+            RowBox[{"value", " ", "=", " ", "0"}], ";", "\[IndentingNewLine]", 
+            RowBox[{"Map", "[", 
+             RowBox[{
+              RowBox[{
+               RowBox[{"(", " ", 
+                RowBox[{
+                 RowBox[{"akt", " ", "=", " ", 
+                  RowBox[{"vyskyty", "[", 
+                   RowBox[{"[", "#", "]"}], "]"}]}], " ", ";", 
+                 "                                                            \
+                    ", 
+                 RowBox[{"(*", 
+                  RowBox[{
+                  "namapovanie", " ", "anonymnej", " ", "funkcie", " ", "na", 
+                   " ", "ka\[ZHacek]d\[YAcute]", " ", "prvok", " ", 
+                   "vygenerovanej", " ", "mno\[ZHacek]iny", " ", "bodov"}], 
+                  "*)"}], "\[IndentingNewLine]", 
+                 RowBox[{
+                  RowBox[{"vyskyty", "[", 
+                   RowBox[{"[", "#", "]"}], "]"}], " ", "=", " ", 
+                  RowBox[{"Style", "[", 
+                   RowBox[{
+                    RowBox[{"vyskyty", "[", 
+                    RowBox[{"[", "#", "]"}], "]"}], ",", "Red"}], "]"}]}], 
+                 ";", "                                          ", 
+                 RowBox[{"(*", 
+                  RowBox[{"zvyraznenie", " ", "prvkov"}], "*)"}], 
+                 "\[IndentingNewLine]", 
+                 RowBox[{"value", " ", "=", " ", "#"}], ";", 
+                 "\[IndentingNewLine]", 
+                 RowBox[{
+                  RowBox[{"pole", "[", 
+                   RowBox[{"[", "index", "]"}], "]"}], "=", " ", 
+                  RowBox[{"Style", "[", 
+                   RowBox[{
+                    RowBox[{"pole", "[", 
+                    RowBox[{"[", "index", "]"}], "]"}], ",", "Purple", ",", 
+                    "16"}], "]"}]}], ";", "\[IndentingNewLine]", 
+                 RowBox[{"Pause", "[", "1", "]"}], ";", "\[IndentingNewLine]",
+                  "\[IndentingNewLine]", 
+                 RowBox[{
+                  RowBox[{"pole", "[", 
+                   RowBox[{"[", "index", "]"}], "]"}], "=", "#"}], ";", 
+                 "                                                            \
+                               ", 
+                 RowBox[{"(*", 
+                  RowBox[{
+                  "zmena", " ", "prvku", " ", "na", " ", "ciselnu", " ", 
+                   "hodnotu"}], "*)"}], "\[IndentingNewLine]", 
+                 RowBox[{
+                  RowBox[{"sorted", "[", 
+                   RowBox[{"[", "akt", "]"}], "]"}], " ", "=", " ", 
+                  RowBox[{"Style", "[", 
+                   RowBox[{"#", ",", "Green"}], "]"}]}], ";", 
+                 "                                                          ", 
+                 RowBox[{"(*", 
+                  RowBox[{
+                  "zvyraznenie", " ", "vkladan\[EAcute]ho", " ", "prvku", " ",
+                    "do", " ", "listu", " ", "utriedeneho", " ", 
+                   "po\:013ea"}], "*)"}], "\[IndentingNewLine]", 
+                 RowBox[{"Pause", "[", "1", "]"}], ";", "\[IndentingNewLine]",
+                  "\[IndentingNewLine]", 
+                 RowBox[{
+                  RowBox[{"sorted", "[", 
+                   RowBox[{"[", "akt", "]"}], "]"}], " ", "=", " ", "#"}], 
+                 " ", ";", 
+                 "                                                            \
+                            ", 
+                 RowBox[{"(*", 
+                  RowBox[{
+                  "zmena", " ", "prvkov", " ", "na", " ", "ciselnu", " ", 
+                   "hodnotu"}], "*)"}], "\[IndentingNewLine]", 
+                 RowBox[{
+                  RowBox[{"vyskyty", "[", 
+                   RowBox[{"[", "#", "]"}], "]"}], " ", "=", " ", "akt"}], 
+                 ";", "  ", "\[IndentingNewLine]", 
+                 "                                                            \
+                                  ", "\[IndentingNewLine]", " ", 
+                 RowBox[{
+                  RowBox[{"vyskyty", "[", 
+                   RowBox[{"[", "#", "]"}], "]"}], "-=", " ", "1"}], " ", ";",
+                  "                                                           \
+                        ", 
+                 RowBox[{"(*", 
+                  RowBox[{
+                  "dekrementovanie", " ", "poz\[IAcute]cie", " ", "na", " ", 
+                   "ktor\[UAcute]", " ", "sa", " ", "bude", " ", "hodnota", 
+                   " ", "indexu", " ", "pre", " ", "dan\[YAcute]", " ", 
+                   "prvok", " ", "vklada\[THacek]"}], "*)"}], 
+                 "\[IndentingNewLine]", 
+                 RowBox[{
+                  RowBox[{"vyskyty", "[", 
+                   RowBox[{"[", "#", "]"}], "]"}], " ", "=", " ", 
+                  RowBox[{"Style", "[", 
+                   RowBox[{
+                    RowBox[{"vyskyty", "[", 
+                    RowBox[{"[", "#", "]"}], "]"}], ",", "Red"}], "]"}]}], 
+                 ";", "                                       ", 
+                 RowBox[{"(*", 
+                  RowBox[{"zvyraznenie", " ", "prvku"}], "*)"}], 
+                 "\[IndentingNewLine]", 
+                 RowBox[{"Pause", "[", "1", "]"}], ";", 
+                 RowBox[{"index", " ", "+=", "1"}], ";", 
+                 "                                                            \
+                ", "\[IndentingNewLine]", 
+                 RowBox[{
+                  RowBox[{"vyskyty", "[", 
+                   RowBox[{"[", "#", "]"}], "]"}], " ", "=", " ", 
+                  RowBox[{"akt", " ", "-", "1"}]}], ";"}], ")"}], "&"}], ",", 
+              "pole"}], "]"}], ";"}], 
+           "                                                     ", 
+           RowBox[{"(*", 
+            RowBox[{
+            "zmena", " ", "prvku", " ", "na", " ", "ciselnu", " ", 
+             "hodnotu"}], "*)"}], "\[IndentingNewLine]", ")"}], ";", 
+          "\[IndentingNewLine]", 
+          RowBox[{"akcia", " ", "=", "0"}], ";", "\[IndentingNewLine]", 
+          RowBox[{"Pause", "[", "3", "]"}], ";", 
+          RowBox[{"vyskyty", " ", "=", " ", 
+           RowBox[{"Table", "[", 
+            RowBox[{"0", ",", 
+             RowBox[{"{", 
+              RowBox[{"i", ",", "1"}], "}"}]}], "]"}]}], ";", 
+          RowBox[{"sorted", " ", "=", " ", 
+           RowBox[{"{", "0", "}"}]}]}]}], "]"}]}]}], "                    ", 
+     RowBox[{"(*", 
+      RowBox[{"vyprazdnenie", " ", "listov"}], "*)"}], "\[IndentingNewLine]", 
+     ")"}]}]}], "]"}]], "Input",ExpressionUUID->"e236cf88-a002-41b0-8684-\
+d606b99d3dd1"]
+},
+WindowSize->{1908., 1011.75},
+WindowMargins->{{-350.25, Automatic}, {642, Automatic}},
+FrontEndVersion->"12.3 for Microsoft Windows (64-bit) (July 9, 2021)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"870dcf78-185f-47d0-8c12-6c5e9e424cdc"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 22155, 478, 1608, "Input",ExpressionUUID->"e236cf88-a002-41b0-8684-d606b99d3dd1"]
+}
+]
+*)
+
+(* End of internal cache information *)
+
