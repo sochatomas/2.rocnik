@@ -1,7 +1,8 @@
 # FIIT-2.rocnik
 
-### Autor:Tomáš Socha
+## Autor: Tomáš Socha
 
+## Zimný semester
 
 ### DSP 
 
