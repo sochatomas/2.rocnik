@@ -1,0 +1,47 @@
+#ICMP types
+0x00 Echo reply
+0x03 Destination unreachable
+0x04 Source quench
+0x05 Redirect
+0x08 Echo request
+0x09 Router advertisement
+0x0A Router selection
+0x0B Time exceeded
+0x0C Parameter problem
+0x0D Timestamp
+0x0E Timestamp reply
+0x0F Information request
+0x10 Information reply
+0x11 Address mask request
+0x12 Address mask reply
+0x1E Traceroute
+#ICMP codes
+#03
+0x00 Net unreachable
+0x01 Host unreachable
+0x02 Protocol unreachable
+0x03 Port unreachable
+0x04 Fragmentation needed and Don't Fragment was set
+0x05 Source route failed
+0x06 Destination network unknown
+0x07 Destination host unknown
+0x08 Source host isolated
+0x09 Communication with destination network administratively prohibited
+0x0A Communication with destination host administratively prohibited
+0x0B Destination network unreachable for type of service
+0x0C Destination host unreachable for type of service
+0x0D Communication administratively prohibited
+0x0E Host precedence violation
+0x0F Precedence cutoff in effect
+#05
+0x00 Redirect datagram for the network (or subnet)
+0x01 Redirect datagram for the host
+0x02 Redirect datagram for the type of service and network
+0x03 Redirect datagram for the type of service and host
+#0A
+0x00 Time to Live exceeded in transit
+0x01 Fragment reassembly time exceeded
+#0B
+0x00 Pointer indicates the error
+0x01 Missing a required option
+0x02 Bad length
