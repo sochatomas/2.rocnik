@@ -1,0 +1,12 @@
+FILEOPEN MACRO t
+MOV AH, 3DH         ;function for opening the file
+MOV AL, 0         ;AL 0-read only, 1-write only, 2-read/write
+MOV DX, offset t    
+INT 21H             
+ENDM     
+
+PRINT MACRO t                
+MOV DX, OFFSET t    
+MOV AH, 09H         ; function for printing string ends with $ 
+INT 21H
+ENDM

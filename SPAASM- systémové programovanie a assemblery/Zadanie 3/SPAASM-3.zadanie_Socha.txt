@@ -1,0 +1,72 @@
+****************************************************
+* Autor: Tomáš Socha                               *
+* Predmet: SPAASM                                  *
+* 3.zadanie: Statická a dynamická analýza programu *
+****************************************************
+
+1. dĺžka akceptovaného reťazca - 8 znakov
+Po opakovanom spúštaní programu a krokovaní po jednotlivých inštrukciách som narazil na inštrukciu ktorá porovnávala register eax s číslom 8. 
+Keď bola hodnota v eax rovná 8 tak sa zavolala funkcia na porovnávanie stringov, inak sa hodnota v eax nastavila na 0 a program pokračoval
+vypísaním hlášky o zadaní nesprávneho reťazca. Následne som zistil že hodnota nachádzajúca sa v eax zodpovedá dĺžke zadaného reťazca zo vstupu.
+Takže akceptovaný reťazec musí mať dĺžku presne 8 znakov.
+
+2. tvar akceptovaného reťazca - FIITgeek
+v prípade zadania správnej dĺžky reťazca(8 znakov) sa v programe aktivovala funkcia loc_4010A9 v ktorej som si všimol 2 reťazce("J#ki80Ys" a
+"I4561AsEmblerySuPOhodicka2x3XzgvwpqLJfBCDnFMH90KNG78QRtTUVWjYZ"). Hneď za nimi nasledovala funkcia sub_401146 v ktorej bol prepísaný prvý
+reťazec znak po znaku tak, že z druhého reťazca bol na základe offsetu skopírovaný konkrétny znak a následne vložený na príslušné miesto 
+v druhom reťazci. Po prepísaní mal prvý reťazec podobu "FIITgeek" a následne sa v dalšej funkcii tento reťazec porovnával so vstupom. 
+AK boli reťazce rovnaké tak sa zobrazilo okno s hláškou "Right !" čiže bol správne zadaný reťazec
+
+3.argumenty a návratové hodnoty
+  DialogBoxParamA
+	argumenty:
+ 	   HINSTANCE hInstance - handler k modulu obsahujúci vzor dialógového okna
+ 	   LPCSTR    lpTemplateName - vzor dialógového okna
+ 	   HWND      hWndParent - handler k oknu vlastniacemu dialógové okno
+ 	   DLGPROC   lpDialogFunc - smerník na procedúru dialógového okna
+ 	   LPARAM    dwInitParam - hodnota vstupujúca do dialógového okna
+	návratová hodnota:
+	   INT_PTR -  vracia hodnotu nResult parametra špecifikovaného v volaní pre EndDialog(slúžiacu na ukončenie okna), v prípade zlyhania 0.
+
+  GetDlgItemTextA
+	argumenty:
+ 	   HWND  hDlg - handler pre okno
+ 	   int   nIDDlgItem - identifikátor, ktorý názov/text sa má načítať
+ 	   LPSTR lpString - buffer na načítanie textu
+ 	   int   cchMax - maximálna dĺžka reťazca načítaného do buffera
+	návratová hodnota:
+ 	   UINT - počet znakov načítaných do buffera( bez ukončovacieho znaku), v prípade zlyhania 0.
+
+  MessageBoxA
+	argumenty:
+ 	   HWND   hWnd - handler okna vlastníka schránky so správou
+ 	   LPCSTR lpText - správa ktorá sa zobrazí v okne
+ 	   LPCSTR lpCaption - názov okna
+ 	   UINT   uType - obsah a správanie okna
+	návratová hodnota:
+	   int -  vráti návratovú hodnotu podľa stlačeného tlačidla, v prípade zlyhania 0.
+
+4. GetDlgItemTextA - volá sa na adrese 00401097, načíta text zo vstupu zadaný používateľom
+5.DialogBoxParamA - volá sa na adrese 0040101E,  vytvorí a následne zobrazí dialógové okno
+6.MessageBoxA - volá sa na adrese 004010EA,  zobrazí dialógové okno obsahujúce hlášku o správnom alebo nesprávnom zadaní vstupného reťazca.(Right ! / Wrong !)
+
+7. Uprava akceptovaneho retazca - TomasSoc
+Vďaka poznaku získaného pri hľadaní akceptovaného reťazca, že podoba akceptovaného reťazca sa určuje vo funkcii  sub_401146 
+prepisovaním jednotlivých znakov v reťazci na základe offsetov znakov z druhého, som si najskôr zistil na akých pozíciách sa nachádzajú 
+znaky potrebné pre vytvorenie môjho akceptovaného retazca. Pozície som následne prepísal ho hexa podoby.
+
+I4561AsEmblerySuPOhodicka2x3XzgvwpqLJfBCDnFMH90KNG78QRtTUVWjYZ
+01234567890123456789012345678901234567890123456789012345678901
+          1         2         3         4         5         6
+T - 37h
+o -13h - 6Fh ascii
+m -8h
+a -18h
+s -6h
+S -Eh
+o -13h
+c -16h
+
+Následne som prepísal v kóde hodnoty jednotlivých offsetov na požadované. Problém robil 2. znak, kde nebol ziadny offset kedže sa bral prvý znak raťazca.
+Preto som [esi] prepísal ascii hodnotou potrebného znaku, v mojom prípade išlo o znak o(6Fh).
+Po prepísaní všetkých potrebných hodnôt som aplikoval zmeny pre modifikovaný súbor a uložil.
