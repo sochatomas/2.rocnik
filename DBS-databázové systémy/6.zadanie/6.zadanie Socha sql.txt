@@ -1,0 +1,159 @@
+-- ORM
+
+-- patches
+SELECT anon_1.patch_version, anon_1.patch_start_date, anon_1.patch_end_date, matches.id AS match_id,
+CAST(round(CAST(matches.duration AS NUMERIC) / 60, 2) AS REAL) AS duration 
+FROM (
+	SELECT patches.id AS id, patches.name AS patch_version, 
+	CAST(EXTRACT(epoch FROM patches.release_date) AS INTEGER) 
+	AS patch_start_date,
+	lead(CAST(EXTRACT(epoch FROM patches.release_date) AS INTEGER), 1)
+	OVER (PARTITION BY 0 ORDER BY patches.id) 
+	AS patch_end_date 
+FROM patches) AS anon_1 
+LEFT OUTER JOIN matches 
+ON matches.start_time >= anon_1.patch_start_date 
+AND (matches.start_time < anon_1.patch_end_date OR anon_1.patch_end_date IS NULL)
+ORDER BY anon_1.patch_version
+
+-- game_exp
+SELECT players.id AS id, coalesce(players.nick, 'unknown') AS player_nick, matches.id AS match_id,
+heroes.localized_name AS hero_localized_name, 
+coalesce(matches_players_details.xp_hero, 0) + coalesce(matches_players_details.xp_creep, 0) +
+coalesce(matches_players_details.xp_other, 0) + coalesce(matches_players_details.xp_roshan, 0) 
+AS anon_1,
+CAST(round(CAST(matches.duration AS NUMERIC) / 60, 2) AS REAL) AS match_duration_minutes,
+matches_players_details.level AS level_gained,
+CASE WHEN (matches_players_details.player_slot < 5) THEN matches.radiant_win 
+ELSE NOT matches.radiant_win END AS winner 
+FROM players 
+JOIN matches_players_details 
+ON players.id = matches_players_details.player_id 
+JOIN heroes 
+ON heroes.id = matches_players_details.hero_id 
+JOIN matches ON matches.id = matches_players_details.match_id 
+WHERE players.id = '14944' ORDER BY matches.id
+
+-- game_objectives
+SELECT players.id AS id, coalesce(players.nick, 'unknown') AS player_nick, matches.id AS match_id,
+heroes.localized_name AS hero_localized_name,
+coalesce(game_objectives.subtype, 'NO_ACTION') AS hero_action, count(*) AS count_1 
+FROM players 
+JOIN matches_players_details 
+ON players.id = matches_players_details.player_id 
+JOIN heroes 
+ON heroes.id = matches_players_details.hero_id 
+JOIN matches 
+ON matches.id = matches_players_details.match_id 
+LEFT OUTER JOIN game_objectives 
+ON game_objectives.match_player_detail_id_1 = matches_players_details.id 
+WHERE players.id = '14944'
+GROUP BY hero_action, players.id, hero_localized_name, matches.id 
+ORDER BY matches.id
+
+	
+-- abilities
+SELECT players.id AS id, coalesce(players.nick, 'unknown') AS player_nick, matches.id AS match_id, 
+heroes.localized_name AS hero_localized_name, 
+abilities.name AS ability_name, count(abilities.name) AS count_1, max(ability_upgrades.level) AS max_1 
+FROM players 
+JOIN matches_players_details 
+ON players.id = matches_players_details.player_id 
+JOIN heroes 
+ON heroes.id = matches_players_details.hero_id 
+JOIN matches 
+ON matches.id = matches_players_details.match_id 
+JOIN ability_upgrades 
+ON matches_players_details.id = ability_upgrades.match_player_detail_id 
+JOIN abilities 
+ON abilities.id = ability_upgrades.ability_id 
+WHERE players.id = '14944' 
+GROUP BY ability_name, players.id, player_nick, hero_localized_name, matches.id 
+ORDER BY matches.id
+
+	
+-- top_purchases
+SELECT anon_1.hero_id AS id, anon_1.h_name AS name, anon_1.pocet AS count, anon_1.item_id AS id, anon_1.i_name 
+AS name 
+FROM (
+	SELECT items.id AS item_id, items.name AS i_name, heroes.id AS hero_id, heroes.localized_name AS h_name, count(*) 
+	AS pocet,
+	row_number() OVER (PARTITION BY heroes.id ORDER BY count(*) DESC, items.name) AS row_number 
+FROM matches 
+	JOIN matches_players_details 
+	ON matches.id = matches_players_details.match_id 
+	JOIN purchase_logs 
+	ON matches_players_details.id = purchase_logs.match_player_detail_id 
+	JOIN items 
+	ON items.id = purchase_logs.item_id 
+	JOIN heroes 
+	ON heroes.id = matches_players_details.hero_id 
+	WHERE matches.id = '4' 
+	AND (matches_players_details.player_slot < 5 AND matches.radiant_win = true OR matches_players_details.player_slot > 127 
+		 AND matches.radiant_win = false) 
+	GROUP BY heroes.id, heroes.localized_name, items.id 
+	ORDER BY heroes.id, count(*) DESC, items.name) AS anon_1 
+WHERE anon_1.row_number <= 5 
+ORDER BY anon_1.hero_id
+
+-- usage
+SELECT anon_1.name, anon_1.id, anon_1.h_name AS name, anon_1.winner, anon_1.bucket, anon_1.count 
+FROM (
+	SELECT heroes.id AS id, heroes.localized_name AS h_name, abilities.name AS name, 
+	CASE WHEN (round((CAST(ability_upgrades.time AS NUMERIC) / CAST(matches.duration AS NUMERIC)) * 100, 5) < 10) THEN '0-9' 
+	WHEN (round((CAST(ability_upgrades.time AS NUMERIC) / CAST(matches.duration AS NUMERIC)) * 100, 5) < 20) THEN '10-19' 
+	WHEN (round((CAST(ability_upgrades.time AS NUMERIC) / CAST(matches.duration AS NUMERIC)) * 100, 5) < 30) THEN '20-29' 
+	WHEN (round((CAST(ability_upgrades.time AS NUMERIC) / CAST(matches.duration AS NUMERIC)) * 100, 5) < 40) THEN '30-39' 
+	WHEN (round((CAST(ability_upgrades.time AS NUMERIC) / CAST(matches.duration AS NUMERIC)) * 100, 5) < 50) THEN '40-49' 
+	WHEN (round((CAST(ability_upgrades.time AS NUMERIC) / CAST(matches.duration AS NUMERIC)) * 100, 5) < 60) THEN '50-59' 
+	WHEN (round((CAST(ability_upgrades.time AS NUMERIC) / CAST(matches.duration AS NUMERIC)) * 100, 5) < 70) THEN '60-69' 
+	WHEN (round((CAST(ability_upgrades.time AS NUMERIC) / CAST(matches.duration AS NUMERIC)) * 100, 5) < 80) THEN '70-79' 
+	WHEN (round((CAST(ability_upgrades.time AS NUMERIC) / CAST(matches.duration AS NUMERIC)) * 100, 5) < 90) THEN '80-89' 
+	WHEN (round((CAST(ability_upgrades.time AS NUMERIC) / CAST(matches.duration AS NUMERIC)) * 100, 5) < 100) THEN '90-99'
+	ELSE '100-109' END AS bucket, 
+	CASE WHEN (matches_players_details.player_slot < 5) THEN matches.radiant_win ELSE NOT matches.radiant_win END AS winner,
+	count(*) AS count, 
+	row_number() OVER (PARTITION BY heroes.id, CASE WHEN (matches_players_details.player_slot < 5) THEN matches.radiant_win 
+					   ELSE NOT matches.radiant_win END 
+					   ORDER BY count(*) DESC) AS row_number 
+	FROM abilities 
+	JOIN ability_upgrades 
+	ON abilities.id = ability_upgrades.ability_id 
+	JOIN matches_players_details 
+	ON matches_players_details.id = ability_upgrades.match_player_detail_id 
+	JOIN matches 
+	ON matches.id = matches_players_details.match_id 
+	JOIN heroes
+	ON heroes.id = matches_players_details.hero_id 
+	WHERE abilities.id = '5004' 
+	GROUP BY heroes.id, winner, bucket, abilities.name ň
+	ORDER BY heroes.name, count(*) DESC) AS anon_1 
+WHERE anon_1.row_number = 1
+
+-- tower_kills
+SELECT anon_1.id, anon_1.localized_name AS name, anon_1.tower_kills 
+FROM (
+	SELECT anon_2.id AS id, anon_2.localized_name AS localized_name, anon_2.match_id AS match_id, anon_2.hero_id AS hero_id, 
+	anon_2.lead_hero_id AS lead_hero_id, anon_2.lead_match_id AS lead_match_id, anon_2.sequence_id AS sequence_id, count(*) + 1 
+	AS tower_kills,
+	row_number() OVER (PARTITION BY anon_2.localized_name ORDER BY count(*) + 1 DESC) AS row_number 
+	FROM (
+		SELECT heroes.id AS id, heroes.localized_name AS localized_name, matches_players_details.match_id AS match_id,
+		matches_players_details.hero_id AS hero_id, 
+		lead(heroes.id) OVER (PARTITION BY 0 ORDER BY matches_players_details.match_id,game_objectives.time) AS lead_hero_id,
+		lead(matches_players_details.match_id, 1) 
+		OVER (PARTITION BY 0 ORDER BY matches_players_details.match_id, heroes.id, game_objectives.time) AS lead_match_id,
+		row_number() OVER (PARTITION BY 0 ORDER BY matches_players_details.match_id, heroes.id, game_objectives.time) - 
+		row_number() OVER (PARTITION BY 0 ORDER BY matches_players_details.match_id, game_objectives.time) AS sequence_id 
+		FROM game_objectives 
+		LEFT OUTER JOIN matches_players_details 
+		ON game_objectives.match_player_detail_id_1 = matches_players_details.id 
+		LEFT OUTER JOIN heroes 
+		ON heroes.id = matches_players_details.hero_id 
+		WHERE game_objectives.subtype = 'CHAT_MESSAGE_TOWER_KILL' AND game_objectives.match_player_detail_id_1 IS NOT NULL 
+		ORDER BY matches_players_details.match_id, game_objectives.time, heroes.id) AS anon_2 
+	WHERE anon_2.hero_id = anon_2.lead_hero_id AND anon_2.match_id = anon_2.lead_match_id 
+	GROUP BY anon_2.id, anon_2.localized_name, anon_2.match_id, anon_2.hero_id, anon_2.lead_hero_id, anon_2.lead_match_id, anon_2.sequence_id 
+	ORDER BY anon_2.match_id) AS anon_1 
+WHERE anon_1.row_number = 1 
+ORDER BY anon_1.tower_kills DESC, anon_1.localized_name ASC

@@ -1,0 +1,359 @@
+
+-- tabulka priatelstva
+CREATE TABLE priatelstva (
+	id_priatelstvo serial PRIMARY KEY,
+	id_chat int not null,
+	id_postava1 int not null,
+	id_postava2 int not null,
+	CONSTRAINT fk_chat
+		foreign key (id_chat)
+		references chat(id_chat),
+	CONSTRAINT fk_postava1
+			foreign key (id_postava1)
+			references instancie_postav(id_postava),
+	CONSTRAINT fk_postava2
+			foreign key (id_postava2)
+			references instancie_postav(id_postava)	
+);
+
+-- tabulka chat
+CREATE TABLE chat (
+	id_chat serial PRIMARY KEY,
+	nazov VARCHAR(45) NOT NULL,
+	datum_vytvorenia timestamp NOT NULL
+);
+
+-- tabulka spravy
+CREATE TABLE spravy (
+	id_sprava serial PRIMARY KEY,
+	id_chat int not null,
+	id_postava int not null,
+	obsah varchar(1000) not null,
+	datum_vytvorenia timestamp not null,
+	CONSTRAINT fk_chat
+		foreign key (id_chat)
+		references chat(id_chat),
+	CONSTRAINT fk_postava
+			foreign key (id_postava)
+			references instancie_postav(id_postava)	
+);
+
+-- tabulka pozvanky
+CREATE TABLE pozvanky (
+	id_pozvanka serial PRIMARY KEY,
+	id_odosielatel int not null,
+	id_prijimatel int not null,
+	obsah varchar(1000) not null,
+	prijata boolean not null default false ,
+	rozhodnuta boolean not null default false,
+	timova boolean not null default false,
+	datum_vytvorenia timestamp not null,
+	CONSTRAINT fk_odosielatel
+		foreign key (id_odosielatel)
+		references instancie_postav(id_postava),
+	CONSTRAINT fk_prijimatel
+			foreign key (id_prijimatel)
+			references instancie_postav(id_postava)
+);
+
+-- tabulka instancie postav
+CREATE TABLE instancie_postav (
+	id_postava serial PRIMARY KEY,
+	id_pouzivatel int not null,
+	id_rola int not null,
+	id_instancia_mapy int not null,
+	id_tim int,
+	id_tim_status int,
+	meno varchar(45) not null unique,
+	zdravie int not null check(zdravie >= 0),
+	max_zdravie int not null check(max_zdravie > 0 and max_zdravie >= zdravie),
+	utok int not null check(utok > 0),
+	obrana int not null check(obrana > 0),
+	level int not null check(level > 0 and level < 100),
+	je_online boolean not null default false,
+	x_pozicia int not null check(x_pozicia >= 0),
+	y_pozicia int not null check(y_pozicia >= 0 ),
+	exp_body int not null check(exp_body >= 0),
+	potrebne_exp_body int not null check(potrebne_exp_body >= 0),
+	datum_vytvorenia timestamp not null,
+	datum_zmeny timestamp not null check(updated_at > created_at),
+	datum_vymazania timestamp not null check(deleted_at > created_at),
+	CONSTRAINT fk_pouzivatel
+			foreign key (id_pouzivatel)
+			references pouzivatelia(id_pouzivatel),
+	CONSTRAINT fk_rola
+			foreign key (id_rola)
+			references roly(id_rola),
+	CONSTRAINT fk_instancia_mapy
+			foreign key (id_instancia_mapy)
+			references instancie_urovni_map(id_instancia)
+	CONSTRAINT fk_tim
+			foreign key (id_tim)
+			references timy(id_tim),
+	CONSTRAINT fk_tim_status
+			foreign key (id_tim_status)
+			references timove_statusy(id_status)
+);
+
+-- tabulka timy
+CREATE TABLE timy (
+	id_tim serial PRIMARY KEY,
+	id_chat int not null,
+	nazov varchar(45) not null unique,
+	CONSTRAINT fk_chat
+		foreign key (id_chat)
+		references chat(id_chat)
+);
+
+-- tabulka timove_statusy
+CREATE TABLE timove_statusy (
+	id_status serial PRIMARY KEY,
+	nazov varchar(45) not null unique,
+	moze_pozyvat boolean not null default false,
+	moze_vyhadzovat boolean not null default false,
+	moze_zrusit_tim boolean not null default false,
+	moze_menit_prava_clenov boolean not null default false
+);
+
+
+-- tabulka postavy_predmety
+CREATE TABLE postavy_predmety (
+	id_postava_predmet serial PRIMARY KEY,
+	id_postava int not null,
+	id_predmet int not null,
+	CONSTRAINT fk_postava
+			foreign key (id_postava)
+			references instancie_postav(id_postava),
+	CONSTRAINT fk_predmet
+			foreign key (id_predmet)
+			references predmety(id_predmet)	
+);
+
+-- tabulka predmety
+CREATE TABLE predmety (
+	id_predmet serial PRIMARY KEY,
+	nazov varchar(45) not null unique,
+	potrebny_level int not null check(potrebny_level > 0 and potrebny_level < 100),
+	utok_bonus int not null check(utok_bonus > 0),
+	obrana_bonus int not null check(obrana_bonus > 0),
+	max_zdravie_bonus int not null check(max_zdravie_bonus > 0)
+);
+
+-- tabulka instancie_predmetov
+CREATE TABLE instancie_predmetov (
+	id_instancia serial PRIMARY KEY,
+	id_predmet int not null,
+	id_instancia_mapy int not null,
+	x_pozicia int not null check(x_pozicia >=0),
+	y_pozicia int not null check(y_pozicia >=0),
+	CONSTRAINT fk_predmet
+			foreign key (id_predmet)
+			references predmety(id_predmet),
+	CONSTRAINT fk_instancia_mapy
+			foreign key (id_instancia_mapy)
+			references instancie_urovni_map(id_instancia)
+);
+
+-- tabulka pouzivatelia
+CREATE TABLE pouzivatelia (
+	id_pouzivatel serial PRIMARY KEY,
+	id_registracia int not null,
+	datum_vytvorenia timestamp not null,
+	CONSTRAINT fk_registracia
+			foreign key (id_registracia)
+			references registracia(id_registracia)	
+);
+
+-- tabulka roly
+CREATE TABLE roly (
+	id_rola serial PRIMARY KEY,
+	nazov varchar(45) not null unique,
+	utok_bonus int not null check(utok_bonus >0),
+	utok_bonus_level int not null check(utok_bonus_level >0),
+	obrana_bonus int not null check(obrana_bonus >0),
+	obrana_bonus_level int not null check(obrana_bonus_level >0),
+	zdravie_bonus int not null check(zdravie_bonus >0),
+	zdravie_bonus_level int not null check(zdravie_bonus_level >0)
+);
+
+-- tabulka registracia
+CREATE TABLE registracia (
+	id_registracia serial PRIMARY KEY,
+	id_typ_registracie int,
+	meno varchar(45) unique,
+	heslo varchar(45),
+	e-mail varchar(45) unique,
+	overenie boolean not null default false,
+	CONSTRAINT fk_typ_registracie
+			foreign key (id_typ_registracie)
+			references sluzby_na_registrovanie(id_sluzba)
+);
+
+-- tabulka sluzby_na_registrovanie
+CREATE TABLE sluzby_na_registrovanie (
+	id_sluzba serial PRIMARY KEY,
+	nazov varchar(45) not null unique
+);
+
+-- tabulka postavy_schopnosti
+CREATE TABLE postavy_schopnosti (
+	id_postava_schopnost serial PRIMARY KEY,
+	id_postava int not null,
+	id_schopnost int not null,
+	CONSTRAINT fk_postava
+			foreign key (id_postava)
+			references instancie_postav(id_postava),
+	CONSTRAINT fk_schopnost
+			foreign key (id_schopnost)
+			references schopnosti(id_schopnost)	
+);
+
+-- tabulka schopnosti
+CREATE TABLE schopnosti (
+	id_schopnost serial PRIMARY KEY,
+	id_rola int not null,
+	nazov varchar(45) not null unique,
+	doba_nabijania int not null check(doba_nabijania >= 0)
+	CONSTRAINT fk_rola
+			foreign key (id_rola)
+			references roly(id_rola)
+);
+
+-- tabulka prerekvizity
+CREATE TABLE prerekvizity (
+	id_prerekvizita serial PRIMARY KEY,
+	id_schopnost int not null,
+	id_potrebna_schopnost int not null,
+	CONSTRAINT fk_schopnost
+			foreign key (id_schopnost)
+			references schopnosti(id_schopnost),
+	CONSTRAINT fk_potrebna_schopnost
+			foreign key (id_potrebna_schopnost)
+			references schopnosti(id_schopnost)
+);
+
+-- tabulka postavy_ulohy
+CREATE TABLE postavy_ulohy (
+	id_postava_uloha serial PRIMARY KEY,
+	id_postava int not null,
+	id_uloha int not null,
+	splnena boolean not null default false,
+	mnozstvo_zabitych int not null default 0 check(mnozstvo_zabitych >= 0)
+	CONSTRAINT fk_postava
+		foreign key (id_postava)
+		references instancie_postav(id_postava),
+	CONSTRAINT fk_uloha
+			foreign key (id_uloha)
+			references ulohy(id_uloha)
+);
+
+-- tabulka pouzite_schopnosti
+CREATE TABLE pouzite_schopnosti (
+	id_pouzita_schopnost serial PRIMARY KEY,
+	id_postava_schopnost int not null,
+	id_boj int not null,
+	CONSTRAINT fk_postava_schopnost
+		foreign key (id_postava_schopnost)
+		references postavy_schopnosti(id_postava_schopnost),
+	CONSTRAINT fk_boj
+			foreign key (id_boj)
+			references zaznam_bojov(id_boj)
+);
+
+-- tabulka prisery
+CREATE TABLE prisery (
+	id_prisera serial PRIMARY KEY,
+	id_rodicovska_prisera int not null,
+	id_predmet int,
+	nazov varchar(45) not null unique,
+	max_zdravie int not null check(max_zdravie > 0),
+	utok int not null check(utok > 0),
+	obrana int not null check(obrana >= 0),
+	min_level int not null check(min_level > 0 and min_level < 100),
+	max_level int not null check(max_level > 0 and max_level >= min_level and max_level < 100),
+	exp_za_zabitie int not null check(exp_za_zabitie > 0),
+	CONSTRAINT fk_rodicovska_prisera
+		foreign key (id_rodicovska_prisera)
+		references prisery(id_prisera),
+	CONSTRAINT fk_predmet
+		foreign key (id_predmet)
+		references predmety(id_predmet)
+);
+
+-- tabulka instancie_priser
+CREATE TABLE instancie_priser (
+	id_instancia serial PRIMARY KEY,
+	id_prisera int not null,
+	id_instancia_mapy int not null,
+	zdravie int not null check(zdravie >= 0),
+	x_pozicia int not null check(x_pozicia >= 0),
+	y_pozicia int not null check(y_pozicia >= 0),
+	CONSTRAINT fk_prisera
+		foreign key (id_prisera)
+		references prisery(id_prisera),
+	CONSTRAINT fk_instancia_mapy
+		foreign key (id_instancia_mapy)
+		references instancie_urovni_map(id_instancia)
+);
+
+-- tabulka ulohy
+CREATE TABLE ulohy (
+	id_uloha serial PRIMARY KEY,
+	id_prisera int not null,
+	id_uroven_mapy int not null,
+	nazov varchar(45) not null unique,
+	obsah varchar(500) not null,
+	mnozstvo int not null check(mnozstvo > 0) default 1,
+	exp_za_splnenie int not null check(exp_za_splnenie > 0),
+	potrebny_level int not null check(potrebny_level > 0 and potrebny_level < 100),
+	CONSTRAINT fk_prisera
+		foreign key (id_prisera)
+		references prisery(id_prisera),
+	CONSTRAINT fk_uroven_mapy
+		foreign key (id_uroven_mapy)
+		references urovne_mapy(id_uroven_mapy)
+);
+
+-- tabulka urovne_mapy
+CREATE TABLE urovne_mapy (
+	id_uroven_mapy serial PRIMARY KEY,
+	nazov varchar(45) not null unique,
+	max_x int not null check(max_x > 0),
+	max_y int not null check(max_y > 0),
+	min_level int not null check(min_level > 0 and min_level < 100)
+);
+
+-- tabulka instancie_urovni_map
+CREATE TABLE instancie_urovni_map (
+	id_instancia serial PRIMARY KEY,
+	id_uroven_mapy int not null,
+	CONSTRAINT fk_uroven_mapy
+		foreign key (id_uroven_mapy)
+		references urovne_mapy(id_uroven_mapy)
+);
+
+-- tabulka zaznam_bojov
+CREATE TABLE zaznam_bojov (
+	id_boj serial PRIMARY KEY,
+	id_postava1 int not null,
+	id_postava2 int,
+	id_prisera int,
+	id_uroven_mapy int not null,
+	x_pozicia int not null check(x_pozicia > 0),
+	y_pozicia int not null check(y_pozicia > 0),
+	zdravie_postava1 int not null check(zdravie_postava1 >= 0),
+	zdravie_postava2 int not null check(zdravie_postava2 >= 0),
+	zaciatok timestamp not null,
+	CONSTRAINT fk_postava1
+		foreign key (id_postava1)
+		references instancie_postav(id_postava),
+	CONSTRAINT fk_postava2
+		foreign key (id_postava2)
+		references instancie_postav(id_postava),
+	CONSTRAINT fk_prisera
+		foreign key (id_prisera)
+		references prisery(id_prisera),
+	CONSTRAINT fk_uroven_mapy
+		foreign key (id_uroven_mapy)
+		references urovne_mapy(id_uroven_mapy)
+);
